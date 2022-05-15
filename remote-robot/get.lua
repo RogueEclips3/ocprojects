@@ -1,5 +1,12 @@
 local event = require("event")
 local robot = require("robot")
+local component = require("component")
+local tunnel = component.tunnel
+
+function Feedback(data)
+    tunnel.send(data)
+    print(data)
+end
 
 function GetMessage()
     local name, from, to, maxdistance, distance, message1, message2 = event.pull("modem")
@@ -7,58 +14,58 @@ function GetMessage()
         if message1 == "move" then
             if message2 then
                 if pcall(robot[message2]) then
-                    print("moved " .. message2)
+                    Feedback("moved " .. message2)
                 else
-                    print("cannot move " .. message2)
+                    Feedback("cannot move " .. message2)
                 end
             end
-        end
-        if message1 == "turn" then
+        elseif message1 == "turn" then
             if message2 then
                 if pcall(robot["turn" .. message2:gsub("^%l", string.upper)]) then
-                    print("turned " .. message2)
+                    Feedback("turned " .. message2)
                 else
-                    print("cannot turn " .. message2)
+                    Feedback("cannot turn " .. message2)
                 end
             end
-        end
-        if message1 == "suck" then
+        elseif message1 == "suck" then
             if message2 then
                 if pcall(robot["suck" .. message2:gsub("^%l", string.upper)]) then
-                    print("sucked " .. message2)
+                    Feedback("sucked " .. message2)
                 else
-                    print("cannot suck " .. message2)
+                    Feedback("cannot suck " .. message2)
                 end
             else
                 pcall(robot.suck)
-                print("sucked")
+                Feedback("sucked")
             end
-        end
-        if message1 == "swing" then
+        elseif message1 == "swing" then
             if message2 then
                 if pcall(robot["swing" .. message2:gsub("^%l", string.upper)]) then
-                    print("swung " .. message2)
+                    Feedback("swung " .. message2)
                 else
-                    print("cannot swing " .. message2)
+                    Feedback("cannot swing " .. message2)
                 end
             else
                 pcall(robot.swing)
-                print("swung")
+                Feedback("swung")
             end
-        end
-        if message1 == "place" then
+        elseif message1 == "place" then
             if message2 then
                 if pcall(robot["place" .. message2:gsub("^%l", string.upper)]) then
-                    print("placed " .. message2)
+                    Feedback("placed " .. message2)
                 else
-                    print("cannot place " .. message2)
+                    Feedback("cannot place " .. message2)
                 end
             else
                 pcall(robot.place)
-                print("placed")
+                Feedback("placed")
             end
+        else
+            Feedback(message1 .. " is not recognized as command")
         end
         GetMessage()
+    else
+        Feedback("stopped")
     end
 end
 GetMessage()
