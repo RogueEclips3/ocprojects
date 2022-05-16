@@ -2,6 +2,7 @@ local event = require("event")
 local robot = require("robot")
 local component = require("component")
 local tunnel = component.tunnel
+local internet = require("internet")
 
 function Feedback(data)
     tunnel.send(data)
@@ -60,6 +61,11 @@ function GetMessage()
                 pcall(robot.place)
                 Feedback("placed")
             end
+        elseif message1 == "connect" then
+            local handle = internet.open("http://127.0.0.1:5500", 5500)
+            local data = handle:read(10)
+            Feedback(data)
+            handle:close()
         else
             Feedback(message1 .. " is not recognized as command")
         end
