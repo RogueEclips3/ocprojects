@@ -1,26 +1,46 @@
-window.onload = function() {
-    var socket = new WebSocket("wss://joshuar2024.smtchs.org");
-    socket.onopen = function(e) {
-        console.log("[OPEN] Connection established");
-        console.log("Sending to server");
-        socket.send("My name is John");
-    };
+let socket;
+function connect() {
+    return new Promise((resolve, reject) => {
+        const port = 8000;
+        const socketUrl = `wss://c05d-75-174-199-73.ngrok.io`;
 
-    socket.onmessage = function(event) {
-        console.log(`[MESSAGE] Data received from server: ${event.data}`);
-    };
-
-    socket.onclose = function(event) {
-        if (event.wasClean) {
-            console.log(`[CLOSE] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-        } else {
-            // e.g. server process killed or network down
-            // event.code is usually 1006 in this case
-            console.log('[CLOSE] Connection died');
+        socket = new WebSocket(socketUrl);
+        socket.onopen = (e) => {
+            socket.send(JSON.stringify({"loaded": true}));
+            resolve();
         }
-    };
 
-    socket.onerror = function(error) {
-        console.log("[ERROR] " + error);
-    };
+        socket.onmessage = (data) => {
+            console.log(data);
+            let parsedData = JSON.parse(data.data);
+            if(parsedData.append === true) {
+                const newEl = document.createElement("p");
+                newEl.textContent = parsedData.returnText;
+                document.getElementById("websocket-returns").appendChild(newEl);
+            }
+        }
+
+        socket.onerror = (e) => {
+            console.log(e);
+            resolve();
+            connect();
+        }
+    });
 }
+
+function isOpen(ws) {
+    return ws.readyState === ws.OPEN;
+}
+
+window.onload = function() {
+    connect();
+    document.getElementById("websocket-button").addEventListener("click", function(e) {
+        console.log("fkjasdf")
+        if(isOpen(socket)) {
+            socket.send(JSON.stringify({
+                10: "this is our data to send"
+            }));
+        }
+    });
+}
+

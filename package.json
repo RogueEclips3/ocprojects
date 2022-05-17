@@ -1,0 +1,26 @@
+{
+  "name": "remote-robot",
+  "version": "1.0.0",
+  "description": "OpenComputers Remote Robot Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RogueEclips3/ocprojects.git"
+  },
+  "author": "RogueEclips3",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RogueEclips3/ocprojects/issues"
+  },
+  "homepage": "https://github.com/RogueEclips3/ocprojects#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "express-ws": "^5.0.2",
+    "path": "^0.12.7",
+    "reconnecting-websocket": "^4.4.0",
+    "url": "^0.11.0"
+  }
+}
