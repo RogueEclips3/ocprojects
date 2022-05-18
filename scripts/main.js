@@ -1,18 +1,16 @@
 let socket;
 function connect() {
     return new Promise((resolve, reject) => {
-        const port = 8000;
-        const socketUrl = `wss://c05d-75-174-199-73.ngrok.io`;
+        const socketUrl = `ws://localhost:8000`;
 
         socket = new WebSocket(socketUrl);
         socket.onopen = (e) => {
-            socket.send(JSON.stringify({"loaded": true}));
             resolve();
         }
 
         socket.onmessage = (data) => {
             console.log(data);
-            let parsedData = JSON.parse(data.data);
+            let parsedData = data.data
             if(parsedData.append === true) {
                 const newEl = document.createElement("p");
                 newEl.textContent = parsedData.returnText;
@@ -34,13 +32,32 @@ function isOpen(ws) {
 
 window.onload = function() {
     connect();
+    // send custom command
     document.getElementById("websocket-button").addEventListener("click", function(e) {
-        console.log("fkjasdf")
+        let message = document.getElementById("websocket-message").value.split(" ");
         if(isOpen(socket)) {
-            socket.send(JSON.stringify({
-                10: "this is our data to send"
-            }));
+            socket.send(message);
+        }
+    });
+    // assign icon controls
+    let icons = document.getElementsByTagName("i");
+    for(let i = 0; i < icons.length; i++) {
+        icons[i].addEventListener("click", function() {
+            if(isOpen(socket)) {
+                socket.send(icons[i].getAttribute("operation"));
+            }
+        });
+    }
+    // assign wasd controls
+    window.addEventListener("keypress", function(event) {
+        if(event.key == "w") {
+            socket.send("forward checkblocks");
+        } else if(event.key == "s") {
+            socket.send("back checkblocks");
+        } else if(event.key == "a") {
+            socket.send("turnLeft checkblocks");
+        } else if(event.key == "d") {
+            socket.send("turnRight checkblocks");
         }
     });
 }
-

@@ -5,11 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remote Robot</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
     <script src="scripts/main.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <div>Hehe</div>
-    <button id="websocket-button">Click me</button>
-    <div id="websocket-returns"></div>
+    <div id="header">
+        <div id="fly" class="controls">
+            <i class="fa-solid fa-arrow-up fa-2x" operation="up"></i>
+            <i class="fa-solid fa-feather fa-2x" operation="none"></i>
+            <i class="fa-solid fa-arrow-down fa-2x" operation="down"></i>
+        </div>
+    </div>
+    <div>
+        <input type="text" id="websocket-message"/>
+        <button id="websocket-button">Click me</button>
+        <div id="websocket-returns"></div>
+    </div>
 </body>
 </html>
