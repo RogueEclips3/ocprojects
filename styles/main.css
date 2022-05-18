@@ -54,11 +54,10 @@ body {
 }
 
 i {
-    padding: 5px;
+	padding: 2px;
     border: thin solid black;
     width: 32px;
-    display: flex;
-    justify-content: center;
+    text-align: center;
 }
 
 .controls {

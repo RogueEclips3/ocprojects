@@ -10,6 +10,7 @@ const wss = new SocketServer({server: server, path: "/"});
 console.log(wss.path);
 wss.on("connection", function(ws) {
     console.log("[Server] Client connected");
+    ws.send("Client connected");
     ws.on("close", () => console.log("[Server] Client disconnected"));
     ws.on("message", function(message)  {
         console.log("[Server] Received message: %s", message);

@@ -1,3 +1,5 @@
+import * as MAP from "./map.js";
+
 let socket;
 function connect() {
     return new Promise((resolve, reject) => {
@@ -9,13 +11,10 @@ function connect() {
         }
 
         socket.onmessage = (data) => {
-            console.log(data);
-            let parsedData = data.data
-            if(parsedData.append === true) {
-                const newEl = document.createElement("p");
-                newEl.textContent = parsedData.returnText;
-                document.getElementById("websocket-returns").appendChild(newEl);
+            if(data.data == "Robot connected") {
+                MAP.CreateScene();
             }
+            console.log(data);
         }
 
         socket.onerror = (e) => {
@@ -48,16 +47,16 @@ window.onload = function() {
             }
         });
     }
-    // assign wasd controls
-    window.addEventListener("keypress", function(event) {
-        if(event.key == "w") {
-            socket.send("forward checkblocks");
-        } else if(event.key == "s") {
-            socket.send("back checkblocks");
-        } else if(event.key == "a") {
-            socket.send("turnLeft checkblocks");
-        } else if(event.key == "d") {
-            socket.send("turnRight checkblocks");
-        }
-    });
 }
+// assign wasd controls
+window.addEventListener("keypress", function(event) {
+    if(event.key == "w") {
+        socket.send("forward,checkblocks");
+    } else if(event.key == "s") {
+        socket.send("back,checkblocks");
+    } else if(event.key == "a") {
+        socket.send("turnLeft,checkblocks");
+    } else if(event.key == "d") {
+        socket.send("turnRight,checkblocks");
+    }
+});

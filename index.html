@@ -6,10 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remote Robot</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
-    <script src="scripts/main.js"></script>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../node_modules/three/build/three.module.js"
+            }
+        }
+    </script>
+    <script type="module" src="scripts/map.js"></script>
+    <script type="module" src="scripts/main.js"></script>
     <div id="header">
         <div id="fly" class="controls">
             <i class="fa-solid fa-arrow-up fa-2x" operation="up"></i>
