@@ -53,6 +53,10 @@ body {
     gap: 20px;
 }
 
+main {
+	position: absolute;
+}
+
 i {
 	padding: 2px;
     border: thin solid black;

@@ -50,13 +50,15 @@ window.onload = function() {
 }
 // assign wasd controls
 window.addEventListener("keypress", function(event) {
-    if(event.key == "w") {
-        socket.send("forward,checkblocks");
-    } else if(event.key == "s") {
-        socket.send("back,checkblocks");
-    } else if(event.key == "a") {
-        socket.send("turnLeft,checkblocks");
-    } else if(event.key == "d") {
-        socket.send("turnRight,checkblocks");
+    if(!$("#websocket-message").is(":focus")) {
+        if(event.key == "w") {
+            socket.send("forward,checkblocks");
+        } else if(event.key == "s") {
+            socket.send("back,checkblocks");
+        } else if(event.key == "a") {
+            socket.send("turnLeft,checkblocks");
+        } else if(event.key == "d") {
+            socket.send("turnRight,checkblocks");
+        }
     }
 });

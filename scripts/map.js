@@ -27,7 +27,22 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 });
 
-export function CreateScene() {
-    document.body.appendChild(renderer.domElement);
-    console.log("hehe");
+function rendering() {
+    requestAnimationFrame(rendering);
+
+    renderer.render(scene, camera);
 }
+
+export function CreateScene() {
+    $("canvas").remove();
+    document.body.appendChild(renderer.domElement);
+    const robotGeo = new THREE.OctahedronGeometry(1);
+    const robotMat = new THREE.MeshBasicMaterial({color: "gray"});
+    const robotMesh = new THREE.Mesh(robotGeo, robotMat);
+    const robotLines = new THREE.EdgesGeometry(robotGeo, 2*Math.PI);
+    const robotLinesMesh = new THREE.LineSegments(robotLines, new THREE.LineBasicMaterial({color: "black"}));
+    scene.add(robotMesh);
+    scene.add(robotLinesMesh);
+}
+
+rendering();
