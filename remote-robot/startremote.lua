@@ -9,8 +9,14 @@ local handleEvent = function(event, message)
         for command in string.gmatch(message, "([^,]+)") do
             if command == "Client connected" then
                 cl:send("Robot connected")
+                print("Connected to server")
+            elseif command == "restart" then
+                cl:disconnect()
+                ConnectToServer()
+                print("Restarted")
             elseif command == "stop" or command == "disconnect" then
                 cl:disconnect()
+                cl = nil
                 print("Disconnected")
             elseif command == "checkblock" then
                 local blocks = ""
@@ -26,4 +32,7 @@ local handleEvent = function(event, message)
 end
 cl = ws.create(handleEvent, true)
 
-cl:connect("localhost", 8000, "/", false)
+function ConnectToServer()
+    cl:connect("localhost", 8000, "/", false)
+end
+ConnectToServer()
