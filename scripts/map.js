@@ -1,6 +1,24 @@
 import * as THREE from "three";
 import {OrbitControls} from "https://cdn.jsdelivr.net/npm/three@0.138/examples/jsm/controls/OrbitControls.js";
 
+const robotGeo = new THREE.OctahedronGeometry(.5);
+const robotMat = new THREE.MeshBasicMaterial({vertexColors: true});
+const robotMesh = new THREE.Mesh(robotGeo, robotMat);
+const robotLines = new THREE.EdgesGeometry(robotGeo, 2*Math.PI);
+const robotLinesMesh = new THREE.LineSegments(robotLines, new THREE.LineBasicMaterial({color: "black"}));
+const colors = [];
+// Sets colors of robot
+var frontColor = new THREE.Color(0x222222);
+var mainColor = new THREE.Color(0x555555);
+for(let i = 0; i < 6; i++) {
+    colors.push(frontColor.r, frontColor.g, frontColor.b);
+}
+for(let i = 0; i < 42; i++) {
+    colors.push(mainColor.r, mainColor.g, mainColor.b);
+}
+robotGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+robotMesh.rotateY(Math.PI/4);
+
 // Scene
 const scene = new THREE.Scene();
 
@@ -36,13 +54,56 @@ function rendering() {
 export function CreateScene() {
     $("canvas").remove();
     document.body.appendChild(renderer.domElement);
-    const robotGeo = new THREE.OctahedronGeometry(1);
-    const robotMat = new THREE.MeshBasicMaterial({color: "gray"});
-    const robotMesh = new THREE.Mesh(robotGeo, robotMat);
-    const robotLines = new THREE.EdgesGeometry(robotGeo, 2*Math.PI);
-    const robotLinesMesh = new THREE.LineSegments(robotLines, new THREE.LineBasicMaterial({color: "black"}));
     scene.add(robotMesh);
-    scene.add(robotLinesMesh);
+    robotMesh.add(robotLinesMesh);
+}
+
+/**
+ * @param {String[]} blocks 
+ */
+export function DrawBlocks(blocks) {
+    for(let i = 0; i < blocks.length; i++) {
+        if(blocks[i] != "minecraft:air") {
+            const offset = new THREE.Vector3(0, -1, 0);
+            const blockGeo = new THREE.BoxGeometry(1, 1);
+            const blockMat = new THREE.MeshBasicMaterial({color: "white"});
+            const blockMesh = new THREE.Mesh(blockGeo, blockMat);
+            const blockEdges = new THREE.EdgesGeometry(blockGeo, 2*Math.PI);
+            const blockEdgesMesh = new THREE.LineSegments(blockEdges, new THREE.LineBasicMaterial({color: "black"}));
+            scene.add(blockMesh);
+            blockMesh.add(blockEdgesMesh);
+            const position = robotMesh.position.clone().add(offset);
+            blockMesh.position.set(position.x, position.y, position.z);
+        }
+    }
+}
+
+/**
+ * @param {String} direction 
+ */
+export function TurnRobot(direction) {
+    if(direction == "Right") {
+        robotMesh.rotateY(-Math.PI/2);
+    } else {
+        robotMesh.rotateY(Math.PI/2);
+    }
+}
+
+/**
+ * @param {String} direction 
+ */
+export function MoveRobot(direction) {
+    console.log(direction);
+    if(direction == "forward") {
+        robotMesh.translateX(1);
+        robotMesh.translateZ(1);
+    } else if(direction == "back") {
+
+    } else if(direction == "up") {
+
+    } else {
+        
+    }
 }
 
 rendering();

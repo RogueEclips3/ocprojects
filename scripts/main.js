@@ -13,6 +13,15 @@ function connect() {
         socket.onmessage = (data) => {
             if(data.data == "Robot connected") {
                 MAP.CreateScene();
+            } else if(data.data.includes("Checked blocks: ")) {
+                var rawMessage = data.data.replace("Checked blocks: ", "");
+                var blocks = rawMessage.split(",");
+                blocks.pop();
+                MAP.DrawBlocks(blocks);
+            } else if(data.data.includes("turn")) {
+                MAP.TurnRobot(data.data.replace("turn", ""));
+            } else if(data.data.includes("move")) {
+                MAP.MoveRobot(data.data.replace("move", ""));
             }
             console.log(data);
         }
@@ -62,3 +71,4 @@ window.addEventListener("keypress", function(event) {
         }
     }
 });
+
