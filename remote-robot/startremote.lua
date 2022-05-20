@@ -19,7 +19,6 @@ local handleEvent = function(event, message)
     if event == "text" then
         for command in string.gmatch(message, "([^,]+)") do
             if command == "Client connected" then
-                cl:send(AnalyzeBlocks())
                 cl:send("Robot connected, facing "..navigation.getFacing())
                 print("Connected to server")
             elseif command == "restart" then
