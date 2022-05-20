@@ -11,8 +11,9 @@ function connect() {
         }
 
         socket.onmessage = (data) => {
-            if(data.data == "Robot connected") {
-                MAP.CreateScene();
+            if(data.data.includes("Robot connected")) {
+                var direction = parseInt(data.data.replace("Robot connected, facing ", ""));
+                MAP.CreateScene(direction);
             } else if(data.data.includes("Checked blocks: ")) {
                 var rawMessage = data.data.replace("Checked blocks: ", "");
                 var blocks = rawMessage.split(",");
@@ -65,9 +66,9 @@ window.addEventListener("keypress", function(event) {
         } else if(event.key == "s") {
             socket.send("back,checkblocks");
         } else if(event.key == "a") {
-            socket.send("turnLeft,checkblocks");
+            socket.send("turnLeft");
         } else if(event.key == "d") {
-            socket.send("turnRight,checkblocks");
+            socket.send("turnRight");
         }
     }
 });
