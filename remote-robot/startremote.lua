@@ -1,7 +1,9 @@
 local robot = require("robot")
 local ws = require("websocket_client")
+local sides = require("sides")
 local component = require("component")
 local geolyzer = component.geolyzer
+local navigation = component.navigation
 local cl
 
 function AnalyzeBlocks()
@@ -18,7 +20,7 @@ local handleEvent = function(event, message)
         for command in string.gmatch(message, "([^,]+)") do
             if command == "Client connected" then
                 cl:send(AnalyzeBlocks())
-                cl:send("Robot connected")
+                cl:send("Robot connected, facing "..navigation.getFacing())
                 print("Connected to server")
             elseif command == "restart" then
                 cl:disconnect()
@@ -28,14 +30,38 @@ local handleEvent = function(event, message)
                 cl:disconnect()
                 cl = nil
                 print("Disconnected")
-            elseif command == "checkblock" then
+            elseif command == "checkblocks" then
                 cl:send(AnalyzeBlocks())
+                print(geolyzer.analyze(sides.north).name)
             else
-                pcall(robot[command])
-                if command.find(command, "turn") then
-                    cl:send(command);
-                elseif command == "forward" or command == "back" or command == "up" or command == "down" then
-                    cl:send("move"..command)
+                -- controls
+                if command == "forward" or command == "back" or command == "up" or command == "down" then
+                    if command == "forward" then
+                        if not geolyzer.detect(3) then
+                            cl:send("moveforward")
+                            pcall(robot[command])
+                        end
+                    elseif command == "back" then
+                        if not geolyzer.detect(2) then
+                            cl:send("moveback")
+                            pcall(robot[command])
+                        end
+                    elseif command == "up" then
+                        if not geolyzer.detect(1) then
+                            cl:send("moveup")
+                            pcall(robot[command])
+                        end
+                    else
+                        if not geolyzer.detect(0) then
+                            cl:send("movedown")
+                            pcall(robot[command])
+                        end
+                    end
+                else
+                    pcall(robot[command])
+                    if command.find(command, "turn") then
+                        cl:send(command);
+                    end
                 end
             end
         end
