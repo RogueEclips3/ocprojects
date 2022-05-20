@@ -1,5 +1,7 @@
 import * as THREE from "three";
-import {OrbitControls} from "https://cdn.jsdelivr.net/npm/three@0.138/examples/jsm/controls/OrbitControls.js";
+import * as MAIN from "./main.js";
+import {OrbitControls} from "../node_modules/three/examples/jsm/controls/OrbitControls.js";
+import { Vector3 } from "three";
 
 // robot
 const robotGeo = new THREE.OctahedronGeometry(.5);
@@ -70,25 +72,85 @@ export function CreateScene(direction) {
     } else if(direction == 4) {
         robotMesh.rotateY(Math.PI);
     }
+    MAIN.CheckBlocks();
 }
 
 /**
  * @param {String[]} blocks 
  */
 export function DrawBlocks(blocks) {
+    // deletes blocks around robot
+    for(let i = 0; i < 6; i++) {
+        var raycastDirection;
+        switch(i) {
+            case 0:
+                direction = new THREE.Vector3(0, -1, 0);
+                break;
+            case 1:
+                direction = new THREE.Vector3(0, 1, 0);
+                break;
+            case 2:
+                direction = new THREE.Vector3(0, 0, -1);
+                break;
+            case 3:
+                direction = new THREE.Vector3(0, 0, 1);
+                break;
+            case 4:
+                offset = new THREE.Vector3(-1, 0, 0);
+                break;
+            case 5:
+                direction = new THREE.Vector3(1, 0, 0);
+                break;
+        }
+        const raycaster = new THREE.Raycaster(robotMesh.position, direction);
+        const intersects = raycaster.intersectObjects(scene.children);
+        intersects.forEach(block => {
+            if(block.object.name == "block" && block.object.position.distanceTo(robotMesh.position) < .7) {
+                scene.remove(block.object);
+            }
+        });
+    }
+    // instantiates blocks
     for(let i = 0; i < blocks.length; i++) {
         if(blocks[i] != "minecraft:air") {
-            const offset = new THREE.Vector3(0, -1, 0);
+            scene.add(axisLines);
+            var offset = new THREE.Vector3(0, -1, 0);
             const blockGeo = new THREE.BoxGeometry(1, 1);
             const blockMat = new THREE.MeshBasicMaterial({color: "white", transparent: true, opacity: .1,});
             const blockMesh = new THREE.Mesh(blockGeo, blockMat);
             const blockEdges = new THREE.EdgesGeometry(blockGeo, 2*Math.PI);
             const blockEdgesMesh = new THREE.LineSegments(blockEdges, new THREE.LineBasicMaterial({color: "black"}));
             scene.add(blockMesh);
-            scene.add(axisLines);
+            switch(i) {
+                case 0:
+                    offset = new THREE.Vector3(0, -1, 0);
+                    break;
+                case 1:
+                    offset = new THREE.Vector3(0, 1, 0);
+                    break;
+                case 2:
+                    offset = new THREE.Vector3(0, 0, -1);
+                    break;
+                case 3:
+                    offset = new THREE.Vector3(0, 0, 1);
+                    break;
+                case 4:
+                    offset = new THREE.Vector3(-1, 0, 0);
+                    break;
+                case 5:
+                    offset = new THREE.Vector3(1, 0, 0);
+                    break;
+            }
+            robotMesh.getWorldPosition(blockMesh.position);
+            robotMesh.getWorldQuaternion(blockMesh.quaternion);
+            blockMesh.rotateY(Math.PI/4);
+            var direction = new THREE.Vector3(0, 0, 0);
+            blockMesh.getWorldDirection(direction);
             blockMesh.add(blockEdgesMesh);
-            const position = robotMesh.position.clone().add(offset);
-            blockMesh.position.set(position.x, position.y, position.z);
+            blockMesh.translateX(offset.x);
+            blockMesh.translateY(offset.y);
+            blockMesh.translateZ(offset.z);
+            blockMesh.name = "block";
         }
     }
 }
@@ -109,6 +171,7 @@ export function TurnRobot(direction) {
  */
 export function MoveRobot(direction) {
     console.log(direction);
+    robotMesh.attach(camera);
     if(direction == "forward") {
         robotMesh.translateX(Math.sqrt(.5));
         robotMesh.translateZ(Math.sqrt(.5));
@@ -120,6 +183,8 @@ export function MoveRobot(direction) {
     } else {
         robotMesh.translateY(-1);
     }
+    scene.attach(camera);
+    controls.target.copy(robotMesh.position);
 }
 
 rendering();

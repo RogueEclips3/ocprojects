@@ -73,3 +73,6 @@ window.addEventListener("keypress", function(event) {
     }
 });
 
+export function CheckBlocks() {
+    socket.send("checkblocks");
+}
