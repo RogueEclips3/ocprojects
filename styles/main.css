@@ -55,10 +55,11 @@ body {
 
 main {
 	position: absolute;
+	width: 100%;
 }
 
 i {
-	padding: 2px;
+	padding: 5px;
     border: thin solid black;
     width: 32px;
     text-align: center;
@@ -67,9 +68,54 @@ i {
 .controls {
     display: flex;
     justify-content: center;
+	flex-direction: column;
+    align-items: center;
 }
 
-.controls#fly {
-    flex-direction: column;
-    align-items: center;
+#header {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	width: 100%;
+}
+
+table {
+	align-self: flex-start;
+}
+
+tbody {
+	border: black solid thin;
+}
+
+tr {
+	display: flex;
+	justify-content: center;
+}
+
+td {
+	border: black solid thin;
+	padding: 10px;
+	margin: 3px;
+	width: 25%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 5px;
+	user-select: none;
+}
+
+#inventory-wrapper {
+	position: absolute;
+	display: flex;
+	gap: 5px;
+}
+
+#custom-commands {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.selected-slot {
+	border: white solid thin;
 }

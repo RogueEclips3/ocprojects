@@ -14,11 +14,21 @@ function connect() {
             if(data.data.includes("Robot connected")) {
                 var direction = parseInt(data.data.replace("Robot connected, facing ", ""));
                 MAP.CreateScene(direction);
+                socket.send("checkinv");
+            } else if(data.data.includes("Selected slot: ")) {
+                var rawMessage = data.data.replace("Selected slot: ", "");
+                var slot = parseInt(rawMessage);
+                MAP.SelectSlot(slot);
             } else if(data.data.includes("Checked blocks: ")) {
                 var rawMessage = data.data.replace("Checked blocks: ", "");
                 var blocks = rawMessage.split(",");
                 blocks.pop();
                 MAP.DrawBlocks(blocks);
+            } else if(data.data.includes("Inventory: ")) {
+                var rawMessage = data.data.replace("Inventory: ", "");
+                var inventory = rawMessage.split(",");
+                inventory.pop();
+                MAP.RefreshInventory(inventory);
             } else if(data.data.includes("turn")) {
                 MAP.TurnRobot(data.data.replace("turn", ""));
             } else if(data.data.includes("move")) {
@@ -75,4 +85,11 @@ window.addEventListener("keypress", function(event) {
 
 export function CheckBlocks() {
     socket.send("checkblocks");
+}
+
+/**
+ * @param {Number} index
+ */
+export function ChangeSelectedSlot(index) {
+    socket.send("select" + index);
 }

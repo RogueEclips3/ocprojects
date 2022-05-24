@@ -20,14 +20,38 @@
     <script type="module" src="scripts/map.js"></script>
     <script type="module" src="scripts/main.js"></script>
     <main>
+        <div id="inventory-wrapper">
+            <table id="inventory">
+                <tbody>
+                    <tr><td id="slot-1" class="slot">0</td><td id="slot-2" class="slot">0</td><td id="slot-3" class="slot">0</td><td id="slot-4" class="slot">0</td></tr>
+                    <tr><td id="slot-5" class="slot">0</td><td id="slot-6" class="slot">0</td><td id="slot-7" class="slot">0</td><td id="slot-8" class="slot">0</td></tr>
+                    <tr><td id="slot-9" class="slot">0</td><td id="slot-10" class="slot">0</td><td id="slot-11" class="slot">0</td><td id="slot-12" class="slot">0</td></tr>
+                    <tr><td id="slot-13" class="slot">0</td><td id="slot-14" class="slot">0</td><td id="slot-15" class="slot">0</td><td id="slot-16" class="slot">0</td></tr>
+                </tbody>
+            </table>
+            <h2 id="hovered-slot">Item In Hovered Slot:</h2>
+        </div>
         <div id="header">
             <div id="fly" class="controls">
                 <i class="fa-solid fa-arrow-up fa-2x" operation="up,checkblocks"></i>
                 <i class="fa-solid fa-feather fa-2x" operation="none"></i>
                 <i class="fa-solid fa-arrow-down fa-2x" operation="down,checkblocks"></i>
             </div>
+            <div id="swing" class="controls">
+                <i class="fa-solid fa-arrow-up fa-2x" operation="swingUp,checkblocks,checkinv"></i>
+                <i class="fa-solid fa-hammer fa-2x" operation="swing,checkblocks,checkinv"></i>
+                <i class="fa-solid fa-arrow-down fa-2x" operation="swingDown,checkblocks,checkinv"></i>
+            </div>
+            <div id="place" class="controls">
+                <i class="fa-solid fa-arrow-up fa-2x" operation="placeUp,checkblocks,checkinv"></i>
+                <i class="fa-solid fa-hand fa-2x" operation="place,checkblocks,checkinv"></i>
+                <i class="fa-solid fa-arrow-down fa-2x" operation="placeDown,checkblocks,checkinv"></i>
+            </div>
+            <div id="suck" class="controls">
+                <i class="fa-solid fa-lungs fa-2x" operation="drop"></i>
+            </div>
         </div>
-        <div>
+        <div id="custom-commands">
             <input type="text" id="websocket-message"/>
             <button id="websocket-button">Click me</button>
             <div id="websocket-returns"></div>

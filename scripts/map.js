@@ -84,28 +84,28 @@ export function DrawBlocks(blocks) {
         var raycastDirection;
         switch(i) {
             case 0:
-                direction = new THREE.Vector3(0, -1, 0);
+                raycastDirection = new THREE.Vector3(0, -1, 0);
                 break;
             case 1:
-                direction = new THREE.Vector3(0, 1, 0);
+                raycastDirection = new THREE.Vector3(0, 1, 0);
                 break;
             case 2:
-                direction = new THREE.Vector3(0, 0, -1);
+                raycastDirection = new THREE.Vector3(0, 0, -1);
                 break;
             case 3:
-                direction = new THREE.Vector3(0, 0, 1);
+                raycastDirection = new THREE.Vector3(0, 0, 1);
                 break;
             case 4:
-                offset = new THREE.Vector3(-1, 0, 0);
+                raycastDirection = new THREE.Vector3(-1, 0, 0);
                 break;
             case 5:
-                direction = new THREE.Vector3(1, 0, 0);
+                raycastDirection = new THREE.Vector3(1, 0, 0);
                 break;
         }
-        const raycaster = new THREE.Raycaster(robotMesh.position, direction);
+        const raycaster = new THREE.Raycaster(robotMesh.position, raycastDirection);
         const intersects = raycaster.intersectObjects(scene.children);
         intersects.forEach(block => {
-            if(block.object.name == "block" && block.object.position.distanceTo(robotMesh.position) < .7) {
+            if(block.object.name != "" && block.object.position.distanceTo(robotMesh.position) < 1.1) {
                 scene.remove(block.object);
             }
         });
@@ -150,7 +150,7 @@ export function DrawBlocks(blocks) {
             blockMesh.translateX(offset.x);
             blockMesh.translateY(offset.y);
             blockMesh.translateZ(offset.z);
-            blockMesh.name = "block";
+            blockMesh.name = blocks[i];
         }
     }
 }
@@ -186,5 +186,41 @@ export function MoveRobot(direction) {
     scene.attach(camera);
     controls.target.copy(robotMesh.position);
 }
+
+/**
+ * @param {String[]} inventory
+ */
+export function RefreshInventory(inventory) {
+    inventory.forEach(entry => {
+        const slot = entry.split(";");
+        const size = parseInt(slot[0]);
+        const name = slot[1];
+        const index = parseInt(slot[2]);
+        $("#slot-"+index).html(size);
+        $("#slot-"+index).attr("stack", name);
+    });
+}
+
+/**
+ * @param {Number} index
+ * @param {Boolean} change
+ */
+export function SelectSlot(index, change = false) {
+    $(".selected-slot").toggleClass("selected-slot");
+    $("#slot-"+index).toggleClass("selected-slot");
+    if(change) {
+        MAIN.ChangeSelectedSlot(index);
+    }
+}
+
+$(document).ready(function() {
+    $(".slot").click(function() {
+        const index = parseInt($(this).attr("id").replace("slot-", ""));
+        SelectSlot(index, true);
+    });
+    $(".slot").hover(function() {
+        $("#hovered-slot").html("Item In Hovered Slot: " + $(this).attr("stack"));
+    });
+});
 
 rendering();
