@@ -1,9 +1,9 @@
 local robot = require("robot")
 local ws = require("websocket_client")
-local sides = require("sides")
 local component = require("component")
 local geolyzer = component.geolyzer
 local navigation = component.navigation
+local controller = component.inventory_controller
 local cl
 
 function AnalyzeBlocks()
@@ -11,7 +11,6 @@ function AnalyzeBlocks()
     for i=0, 5 do
         blocks = blocks..geolyzer.analyze(i).name..","
     end
-    print("Checked blocks")
     return blocks
 end
 
@@ -20,6 +19,7 @@ local handleEvent = function(event, message)
         for command in string.gmatch(message, "([^,]+)") do
             if command == "Client connected" then
                 cl:send("Robot connected, facing "..navigation.getFacing())
+                cl:send("Selected slot: "..robot.select())
                 print("Connected to server")
             elseif command == "restart" then
                 cl:disconnect()
@@ -31,7 +31,22 @@ local handleEvent = function(event, message)
                 print("Disconnected")
             elseif command == "checkblocks" then
                 cl:send(AnalyzeBlocks())
-                print(geolyzer.analyze(sides.north).name)
+            elseif command == "checkinv" then
+                local inventory = "Inventory: "
+                for i=1, robot.inventorySize() do
+                    local stack = controller.getStackInInternalSlot(i)
+                    if stack then
+                        local entry = stack.size..";"..stack.name..";"..i
+                        inventory = inventory..entry..","
+                    else
+                        inventory = inventory.."0;minecraft:air;"..i..","
+                    end
+                end
+                cl:send(inventory)
+            elseif string.match(command, "select") then
+                local rawMessage = string.gsub(command, "select", "")
+                local index = tonumber(rawMessage)
+                robot.select(index)
             else
                 -- controls
                 if command == "forward" or command == "back" or command == "up" or command == "down" then
